@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace WebAPI.BusinessLogicLayer.Models ;
+namespace WebAPI.Domain.Models;
 
 public class ApplicationUser : IdentityUser
 {
-        
+    
 }

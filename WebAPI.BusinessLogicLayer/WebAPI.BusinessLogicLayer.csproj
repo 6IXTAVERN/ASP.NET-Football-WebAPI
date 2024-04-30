@@ -10,4 +10,13 @@
       <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.4" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Services\ManagerService\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\WebAPI.Domain\WebAPI.Domain.csproj" />
+        <ProjectReference Include="..\WebAPI.DataAccessLayer\WebAPI.DataAccessLayer.csproj" />
+    </ItemGroup>
+
 </Project>
