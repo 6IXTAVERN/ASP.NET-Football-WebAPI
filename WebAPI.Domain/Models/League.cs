@@ -1,4 +1,4 @@
-namespace WebAPI.Domain.Models ;
+namespace WebAPI.Domain.Models;
 
 public class League
 {
