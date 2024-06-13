@@ -22,6 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\WebAPI.BusinessLogicLayer\WebAPI.BusinessLogicLayer.csproj" />
     <ProjectReference Include="..\WebAPI.DataAccessLayer\WebAPI.DataAccessLayer.csproj" />
+    <ProjectReference Include="..\WebAPI.Domain\WebAPI.Domain.csproj" />
   </ItemGroup>
 
 </Project>

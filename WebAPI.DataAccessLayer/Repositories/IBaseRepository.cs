@@ -9,5 +9,7 @@ public interface IBaseRepository<T>
     
     Task<T> Update(T entity);
 
+    Task<T?> GetById(string entityId);
+    
     IQueryable<T> GetAll();
 }
