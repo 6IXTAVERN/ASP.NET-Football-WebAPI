@@ -29,12 +29,20 @@ public class LeagueRepository : IBaseRepository<League>
         }
     }
     
-    public async Task Delete(League entity)
+    public async Task<League?> Delete(string leagueId)
     {
         try
         {
+            var entity = await _db.Leagues.FindAsync(leagueId);
+            if (entity == null)
+            {
+                _logger.LogError("League with id {leagueId} not found", leagueId);
+                return null;
+            }
             _db.Leagues.Remove(entity);
             await _db.SaveChangesAsync();
+            
+            return entity;
         }
         catch (Exception)
         {
@@ -43,7 +51,7 @@ public class LeagueRepository : IBaseRepository<League>
         }
     }
     
-    public async Task<League> Update(League entity)
+    public async Task<League?> Update(League entity)
     {
         try
         {
@@ -59,11 +67,11 @@ public class LeagueRepository : IBaseRepository<League>
         }
     }
     
-    public IQueryable<League> GetAll()
+    public async Task<List<League>> GetAll()
     {
         try
         {
-            return _db.Leagues.AsQueryable();
+            return await _db.Leagues.ToListAsync();
         }
         catch (Exception)
         {

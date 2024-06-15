@@ -29,12 +29,21 @@ public class ManagerRepository : IManagerRepository
             }
     }
 
-    public async Task Delete(Manager entity)
+    public async Task<Manager?> Delete(string managerId)
     {
         try
         {
+            var entity = await _db.Managers.FindAsync(managerId);
+            if (entity == null)
+            {
+                _logger.LogError("Manager with id {managerId} not found", managerId);
+                return null;
+            }
+            
             _db.Managers.Remove(entity);
             await _db.SaveChangesAsync();
+            
+            return entity;
         }
         catch (Exception)
         {
@@ -43,7 +52,7 @@ public class ManagerRepository : IManagerRepository
         }
     }
 
-    public async Task<Manager> Update(Manager entity)
+    public async Task<Manager?> Update(Manager entity)
     {
         try
         {
@@ -59,11 +68,11 @@ public class ManagerRepository : IManagerRepository
         }
     }
 
-    public IQueryable<Manager> GetAll()
+    public async Task<List<Manager>> GetAll()
     {
         try
         {
-            return _db.Managers.AsQueryable();
+            return await _db.Managers.ToListAsync();
         }
         catch (Exception)
         {

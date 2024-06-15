@@ -29,12 +29,20 @@ public class SeasonRepository : ISeasonRepository
         }
     }
     
-    public async Task Delete(Season entity)
+    public async Task<Season?> Delete(string seasonId)
     {
         try
         {
+            var entity = await _db.Seasons.FindAsync(seasonId);
+            if (entity == null)
+            {
+                _logger.LogError("Season with id {seasonId} not found", seasonId);
+                return null;
+            }
             _db.Seasons.Remove(entity);
             await _db.SaveChangesAsync();
+
+            return entity;
         }
         catch (Exception)
         {
@@ -43,7 +51,7 @@ public class SeasonRepository : ISeasonRepository
         }
     }
     
-    public async Task<Season> Update(Season entity)
+    public async Task<Season?> Update(Season entity)
     {
         try
         {
@@ -59,11 +67,11 @@ public class SeasonRepository : ISeasonRepository
         }
     }
     
-    public IQueryable<Season> GetAll()
+    public async Task<List<Season>> GetAll()
     {
         try
         {
-            return _db.Seasons.AsQueryable();
+            return await _db.Seasons.ToListAsync();
         }
         catch (Exception)
         {

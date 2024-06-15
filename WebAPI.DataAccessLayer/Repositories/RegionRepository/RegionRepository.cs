@@ -29,12 +29,21 @@ public class RegionRepository : IRegionRepository
         }
     }
     
-    public async Task Delete(Region entity)
+    public async Task<Region?> Delete(string regionId)
     {
         try
         {
+            var entity = await _db.Regions.FindAsync(regionId);
+            if (entity == null)
+            {
+                _logger.LogError("Region with id {regionId} not found", regionId);
+                return null;
+            }
+            
             _db.Regions.Remove(entity);
             await _db.SaveChangesAsync();
+
+            return entity;
         }
         catch (Exception)
         {
@@ -43,7 +52,7 @@ public class RegionRepository : IRegionRepository
         }
     }
     
-    public async Task<Region> Update(Region entity)
+    public async Task<Region?> Update(Region entity)
     {
         try
         {
@@ -59,11 +68,11 @@ public class RegionRepository : IRegionRepository
         }
     }
     
-    public IQueryable<Region> GetAll()
+    public async Task<List<Region>> GetAll()
     {
         try
         {
-            return _db.Regions.AsQueryable();
+            return await _db.Regions.ToListAsync();
         }
         catch (Exception)
         {

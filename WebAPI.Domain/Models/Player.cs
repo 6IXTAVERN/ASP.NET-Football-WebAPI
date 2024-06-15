@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace WebAPI.Domain.Models ;
 
 public class Player
@@ -15,7 +17,7 @@ public class Player
         FullName = "";
         Nationality = "";
         Position = "";
-        TeamId = "";
-        Team = new Team();
+        TeamId = null;
+        Team = null;
     }
 }

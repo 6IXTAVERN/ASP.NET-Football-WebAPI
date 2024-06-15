@@ -5,11 +5,11 @@ public interface IBaseRepository<T>
 {
     Task Create(T entity);
     
-    Task Delete(T entity);
+    Task<T?> Delete(string entityId);
     
-    Task<T> Update(T entity);
+    Task<T?> Update(T entity);
 
     Task<T?> GetById(string entityId);
     
-    IQueryable<T> GetAll();
+    Task<List<T>> GetAll();
 }

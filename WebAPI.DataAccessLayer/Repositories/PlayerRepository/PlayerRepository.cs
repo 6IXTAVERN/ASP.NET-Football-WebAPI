@@ -29,12 +29,21 @@ public class PlayerRepository : IPlayerRepository
         }
     }
     
-    public async Task Delete(Player entity)
+    public async Task<Player?> Delete(string playerId)
     {
         try
         {
+            var entity = await _db.Players.FirstOrDefaultAsync(player => player.Id == playerId);
+            if (entity == null)
+            {
+                _logger.LogError("Player with id {playerId} not found", playerId);
+                return null;
+            }
+            
             _db.Players.Remove(entity);
             await _db.SaveChangesAsync();
+            
+            return entity;
         }
         catch (Exception)
         {
@@ -43,7 +52,7 @@ public class PlayerRepository : IPlayerRepository
         }
     }
     
-    public async Task<Player> Update(Player entity)
+    public async Task<Player?> Update(Player entity)
     {
         try
         {
@@ -59,11 +68,13 @@ public class PlayerRepository : IPlayerRepository
         }
     }
     
-    public IQueryable<Player> GetAll()
+    public async Task<List<Player>> GetAll()
     {
         try
         {
-            return _db.Players.AsQueryable();
+            return await _db.Players
+                .Include(p => p.Team)
+                .ToListAsync();
         }
         catch (Exception)
         {
@@ -76,7 +87,9 @@ public class PlayerRepository : IPlayerRepository
     {
         try
         {
-            return await _db.Players.FirstOrDefaultAsync(player => player.Id == playerId);
+            return await _db.Players
+                .Include(p => p.Team)
+                .FirstOrDefaultAsync(player => player.Id == playerId);
         }
         catch (Exception)
         {

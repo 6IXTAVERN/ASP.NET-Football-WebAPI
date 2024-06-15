@@ -29,12 +29,20 @@ public class TeamRepository : ITeamRepository
         }
     }
     
-    public async Task Delete(Team entity)
+    public async Task<Team?> Delete(string teamId)
     {
         try
         {
+            var entity = await _db.Teams.FindAsync(teamId);
+            if (entity == null)
+            {
+                _logger.LogError("Team with id {teamId} not found", teamId);
+                return null;
+            }
             _db.Teams.Remove(entity);
             await _db.SaveChangesAsync();
+
+            return entity;
         }
         catch (Exception)
         {
@@ -43,7 +51,7 @@ public class TeamRepository : ITeamRepository
         }
     }
     
-    public async Task<Team> Update(Team entity)
+    public async Task<Team?> Update(Team entity)
     {
         try
         {
@@ -59,11 +67,11 @@ public class TeamRepository : ITeamRepository
         }
     }
     
-    public IQueryable<Team> GetAll()
+    public async Task<List<Team>> GetAll()
     {
         try
         {
-            return _db.Teams.AsQueryable();
+            return await _db.Teams.ToListAsync();
         }
         catch (Exception)
         {
