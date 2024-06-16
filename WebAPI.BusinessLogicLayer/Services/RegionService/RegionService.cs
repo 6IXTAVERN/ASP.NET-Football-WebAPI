@@ -48,33 +48,26 @@ public class RegionService : IRegionService
         }
     }
 
-    public async Task<IBaseResponse<Region>> CreateRegion(Region region)
+    public async Task<IBaseResponse<bool>> CreateRegion(Region region)
     {
         try
         {
             await _regionRepository.Create(region);
-            return new BaseResponse<Region>("Регион создан", StatusCode.Ok, region);
+            return new BaseResponse<bool>("Регион создан", StatusCode.Ok, true);
         }
         catch (Exception ex)
         {
-            return new BaseResponse<Region>(
+            return new BaseResponse<bool>(
                 $"[CreateRegion] : {ex.Message}",
-                StatusCode.InternalServerError);
+                StatusCode.InternalServerError, false);
         }
     }
 
-    public async Task<IBaseResponse<Region>> UpdateRegion(string regionId, Region region)
+    public async Task<IBaseResponse<Region>> UpdateRegion(Region region)
     {
         try
         {
-            var entity = await _regionRepository.GetById(regionId);
-            if (entity == null)
-            {
-                return new BaseResponse<Region>("Регион не найден", StatusCode.NotFound, null);
-            }
-            // TODO: тут должна быть реализована правильная логика обновления полей из UpdateRegionDto
-            entity.Name = region.Name;
-            entity = await _regionRepository.Update(entity);
+            var entity = await _regionRepository.Update(region);
             return new BaseResponse<Region>("Регион изменен", StatusCode.Ok, entity);
         }
         catch (Exception ex)

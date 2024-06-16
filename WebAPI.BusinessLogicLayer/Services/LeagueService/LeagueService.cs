@@ -48,19 +48,19 @@ public class LeagueService : ILeagueService
         }
     }
 
-    public async Task<IBaseResponse<League>> CreateLeague(League league)
+    public async Task<IBaseResponse<bool>> CreateLeague(League league)
     {
         try
         {
             // TODO: разные ситуации предусмотреть
             await _leagueRepository.Create(league);
-            return new BaseResponse<League>("Лига создана", StatusCode.Ok);
+            return new BaseResponse<bool>("Лига создана", StatusCode.Ok, true);
         }
         catch (Exception ex)
         {
-            return new BaseResponse<League>(
+            return new BaseResponse<bool>(
                 $"[CreateLeague] : {ex.Message}",
-                StatusCode.InternalServerError);
+                StatusCode.InternalServerError, false);
         }
     }
 

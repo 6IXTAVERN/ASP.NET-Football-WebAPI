@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WebAPI.DTO.League;
+namespace WebAPI.DTO.LeagueDTO;
 
 public class UpdateLeagueDto
 {
@@ -11,5 +11,5 @@ public class UpdateLeagueDto
 
     [Required]
     [ForeignKey("RegionId")]
-    public int RegionId { get; set; }
+    public string RegionId { get; set; }
 }

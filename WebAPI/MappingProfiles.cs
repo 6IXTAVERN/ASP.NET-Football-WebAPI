@@ -1,6 +1,7 @@
 using AutoMapper;
 using WebAPI.Domain.DTO.Player;
 using WebAPI.Domain.Models;
+using WebAPI.DTO.LeagueDTO;
 using WebAPI.DTO.PlayerDTO;
 
 
@@ -12,9 +13,9 @@ public class MappingProfiles : Profile {
         CreateMap<Player, PlayerDto>().ReverseMap();
         CreateMap<Player, UpdatePlayerDto>().ReverseMap();
         
-        // CreateMap<Club, ClubDTO>().ReverseMap();
-        // CreateMap<Club, CreateClubDTO>().ReverseMap();
-        // CreateMap<Club, UpdateClubDTO>().ReverseMap();
+        CreateMap<League, LeagueDto>().ReverseMap();
+        CreateMap<League, CreateLeagueDto>().ReverseMap();
+        CreateMap<League, UpdateLeagueDto>().ReverseMap();
         //
         // CreateMap<Country, CreateCountryDTO>().ReverseMap();
         // CreateMap<Country, CountryDTO>().ReverseMap();

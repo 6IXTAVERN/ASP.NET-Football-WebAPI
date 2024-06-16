@@ -14,5 +14,5 @@ public class UpdatePlayerDto
     [Required]
     public string Position { get; set; } = string.Empty;
 
-    public int? TeamId { get; set; }
+    public string? TeamId { get; set; }
 }

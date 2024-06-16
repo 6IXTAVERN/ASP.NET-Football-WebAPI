@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.BusinessLogicLayer.Services.LeagueService;
 using WebAPI.Domain.Models;
-using WebAPI.DTO.League;
+using WebAPI.DTO.LeagueDTO;
 
 namespace WebAPI.Controllers;
 
@@ -63,7 +63,7 @@ public class LeagueController : ControllerBase
         }
         
         var leagueToReturn = _mapper.Map<LeagueDto>(leagueToCreate);
-        return CreatedAtAction("GetLeague", new { id = leagueToCreate.Id }, leagueToReturn);
+        return CreatedAtAction("GetLeague", new { leagueId = leagueToCreate.Id }, leagueToReturn);
     }
     
     [Route("UpdateLeague/{leagueId}")]

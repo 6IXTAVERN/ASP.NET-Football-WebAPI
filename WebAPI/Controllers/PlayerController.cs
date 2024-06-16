@@ -64,7 +64,7 @@ public class PlayerController : ControllerBase
         }
         
         var playerToReturn = _mapper.Map<PlayerDto>(playerToCreate);
-        return CreatedAtAction("GetPlayer", new { id = playerToCreate.Id }, playerToReturn);
+        return CreatedAtAction("GetPlayer", new { playerId = playerToCreate.Id }, playerToReturn);
     }
     
     [Route("UpdatePlayer/{playerId}")]

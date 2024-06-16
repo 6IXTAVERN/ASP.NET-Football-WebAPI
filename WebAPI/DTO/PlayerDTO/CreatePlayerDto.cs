@@ -16,5 +16,5 @@ public class CreatePlayerDto
     public string Position { get; set; } = string.Empty;
 
     [ForeignKey("TeamId")]
-    public int? TeamId { get; set; }
+    public string? TeamId { get; set; }
 }
