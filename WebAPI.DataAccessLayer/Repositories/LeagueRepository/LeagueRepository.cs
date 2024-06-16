@@ -4,7 +4,7 @@ using WebAPI.Domain.Models;
 
 namespace WebAPI.DataAccessLayer.Repositories.LeagueRepository ;
 
-public class LeagueRepository : IBaseRepository<League>
+public class LeagueRepository : ILeagueRepository
 {
     private readonly DataContext _db;
     private readonly ILogger<LeagueRepository> _logger;
@@ -71,7 +71,9 @@ public class LeagueRepository : IBaseRepository<League>
     {
         try
         {
-            return await _db.Leagues.ToListAsync();
+            return await _db.Leagues
+                .Include(league => league.Teams)
+                .ToListAsync();
         }
         catch (Exception)
         {
@@ -84,7 +86,9 @@ public class LeagueRepository : IBaseRepository<League>
     {
         try
         {
-            return await _db.Leagues.FirstOrDefaultAsync(league => league.Id == leagueId);
+            return await _db.Leagues
+                .Include(league => league.Teams)
+                .FirstOrDefaultAsync(league => league.Id == leagueId);
         }
         catch (Exception)
         {

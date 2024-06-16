@@ -1,7 +1,10 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.BusinessLogicLayer.Services.PlayerService;
+using WebAPI.Domain.DTO.Player;
 using WebAPI.Domain.Models;
+using WebAPI.DTO.PlayerDTO;
 
 namespace WebAPI.Controllers;
 
@@ -10,58 +13,82 @@ namespace WebAPI.Controllers;
 public class PlayerController : ControllerBase
 {
     private readonly IPlayerService _playerService;
+    private readonly IMapper _mapper;
     private readonly ILogger<PlayerController> _logger;
 
-    public PlayerController(IPlayerService playerService, ILogger<PlayerController> logger)
+    public PlayerController(IPlayerService playerService, IMapper mapper, ILogger<PlayerController> logger)
     {
         _logger = logger;
         _playerService = playerService;
+        _mapper = mapper;
     }
     
     [Route("GetPlayerList")]
     [HttpGet]
-    public async Task<List<Player>> GetPlayers()
+    public async Task<IActionResult> GetPlayers()
     {
         var response = await _playerService.GetPlayers();
-        return response.Data!;
+        return Ok(response.Data);
     }
 
     [Route("GetPlayer/{playerId}")]
     [HttpGet]
-    public async Task<Player> GetPlayer(string playerId)
+    public async Task<IActionResult> GetPlayer(string playerId)
     {
+        if (!ModelState.IsValid) {
+            return BadRequest(ModelState);
+        }
+
         var response = await _playerService.GetPlayerById(playerId);
-        return response.Data!;
+        if (response.StatusCode == Domain.Response.StatusCode.NotFound) {
+            return NotFound();
+        }
+        
+        var playerToReturn = _mapper.Map<PlayerDto>(response.Data);
+
+        return Ok(playerToReturn);
     }
     
     [Route("CreatePlayer")]
     [HttpPost]
-    public async Task<Player> CreatePlayer([FromBody] Player player)
+    public async Task<IActionResult> CreatePlayer([FromBody] CreatePlayerDto createPlayerDto)
     {
-        // {
-        //     "fullName": "Stepan",
-        //     "nationality": "Россия",
-        //     "position": "ФРВ"
-        // }
-        await _playerService.CreatePlayer(player);
-        return player;
+        if (ModelState.IsValid == false) {
+            return BadRequest("Cannot create player");
+        }
+        
+        var playerToCreate = _mapper.Map<Player>(createPlayerDto);
+        var response = await _playerService.CreatePlayer(playerToCreate);
+        if (response.Data == false) {
+            return BadRequest("Something went wrong");
+        }
+        
+        var playerToReturn = _mapper.Map<PlayerDto>(playerToCreate);
+        return CreatedAtAction("GetPlayer", new { id = playerToCreate.Id }, playerToReturn);
     }
     
     [Route("UpdatePlayer/{playerId}")]
     [HttpPut]
-    public async Task<IActionResult> UpdatePlayer([FromBody] Player player)
+    public async Task<IActionResult> UpdatePlayer(
+        [FromRoute] string playerId, 
+        [FromBody] UpdatePlayerDto updatePlayerDto)
     {
-        await _playerService.UpdatePlayer(player);
-        // if (playerId != player.Id)
-        // {
-        //     return BadRequest();
-        // }
-        // var updatedPlayer = _playerService.UpdatePlayer(player);
-        // if (updatedPlayer == null)
-        // {
-        //     return NotFound();
-        // }
-        return Ok(player);
+        if (ModelState.IsValid == false) {
+            return BadRequest(ModelState);
+        }
+        
+        var playerToUpdate = _mapper.Map<Player>(updatePlayerDto);
+        if (playerToUpdate == null) {
+            return BadRequest(ModelState);
+        }
+        playerToUpdate.Id = playerId;
+
+        var response = await _playerService.UpdatePlayer(playerToUpdate);
+        
+        if (response.StatusCode == Domain.Response.StatusCode.NotFound) {
+            return NotFound();
+        }
+        
         return NoContent();
     }
     
@@ -69,7 +96,15 @@ public class PlayerController : ControllerBase
     [HttpDelete]
     public async Task<IActionResult> DeletePlayer(string playerId)
     {
-        await _playerService.DeletePlayer(playerId);
-        return Ok(playerId);
+        if (ModelState.IsValid == false) {
+            return BadRequest(ModelState);
+        }
+
+        var response = await _playerService.DeletePlayer(playerId);
+        if (response.StatusCode == Domain.Response.StatusCode.NotFound) {
+            return BadRequest("Something went wrong");
+        }
+
+        return NoContent();
     }
 }

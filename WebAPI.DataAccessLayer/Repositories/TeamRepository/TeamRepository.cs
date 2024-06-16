@@ -71,7 +71,11 @@ public class TeamRepository : ITeamRepository
     {
         try
         {
-            return await _db.Teams.ToListAsync();
+            return await _db.Teams
+                .Include(team => team.Players)
+                .Include(team => team.League)
+                .Include(team => team.Manager)
+                .ToListAsync();
         }
         catch (Exception)
         {
@@ -84,7 +88,11 @@ public class TeamRepository : ITeamRepository
     {
         try
         {
-            return await _db.Teams.FirstOrDefaultAsync(team => team.Id == teamId);
+            return await _db.Teams
+                .Include(team => team.Players)
+                .Include(team => team.League)
+                .Include(team => team.Manager)
+                .FirstOrDefaultAsync(team => team.Id == teamId);
         }
         catch (Exception)
         {

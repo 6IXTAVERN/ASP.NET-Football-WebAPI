@@ -72,7 +72,9 @@ public class ManagerRepository : IManagerRepository
     {
         try
         {
-            return await _db.Managers.ToListAsync();
+            return await _db.Managers
+                .Include(manager => manager.Team)
+                .ToListAsync();
         }
         catch (Exception)
         {
@@ -85,7 +87,9 @@ public class ManagerRepository : IManagerRepository
     {
         try
         {
-            return await _db.Managers.FirstOrDefaultAsync(manager => manager.Id == managerId);
+            return await _db.Managers
+                .Include(manager => manager.Team)
+                .FirstOrDefaultAsync(manager => manager.Id == managerId);
         }
         catch (Exception)
         {

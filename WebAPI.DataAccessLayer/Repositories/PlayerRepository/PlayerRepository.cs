@@ -33,7 +33,7 @@ public class PlayerRepository : IPlayerRepository
     {
         try
         {
-            var entity = await _db.Players.FirstOrDefaultAsync(player => player.Id == playerId);
+            var entity = await _db.Players.FindAsync(playerId);
             if (entity == null)
             {
                 _logger.LogError("Player with id {playerId} not found", playerId);
@@ -73,7 +73,7 @@ public class PlayerRepository : IPlayerRepository
         try
         {
             return await _db.Players
-                .Include(p => p.Team)
+                .Include(player => player.Team)
                 .ToListAsync();
         }
         catch (Exception)
@@ -88,7 +88,7 @@ public class PlayerRepository : IPlayerRepository
         try
         {
             return await _db.Players
-                .Include(p => p.Team)
+                .Include(player => player.Team)
                 .FirstOrDefaultAsync(player => player.Id == playerId);
         }
         catch (Exception)

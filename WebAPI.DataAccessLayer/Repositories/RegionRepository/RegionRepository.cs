@@ -72,7 +72,9 @@ public class RegionRepository : IRegionRepository
     {
         try
         {
-            return await _db.Regions.ToListAsync();
+            return await _db.Regions
+                .Include(region => region.Leagues)
+                .ToListAsync();
         }
         catch (Exception)
         {
@@ -85,7 +87,9 @@ public class RegionRepository : IRegionRepository
     {
         try
         {
-            return await _db.Regions.FirstOrDefaultAsync(region => region.Id == regionId);
+            return await _db.Regions
+                .Include(region => region.Leagues)
+                .FirstOrDefaultAsync(region => region.Id == regionId);
         }
         catch (Exception)
         {

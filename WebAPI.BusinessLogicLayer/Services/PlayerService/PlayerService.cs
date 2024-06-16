@@ -48,16 +48,16 @@ public class PlayerService : IPlayerService
         }
     }
     
-    public async Task<IBaseResponse<Player>> CreatePlayer(Player player)
+    public async Task<IBaseResponse<bool>> CreatePlayer(Player player)
     {
         try
         {
             await _playerRepository.Create(player);
-            return new BaseResponse<Player>("Игрок создан", StatusCode.Ok, player);
+            return new BaseResponse<bool>("Игрок создан", StatusCode.Ok, true);
         }
         catch (Exception ex)
         {
-            return new BaseResponse<Player>(
+            return new BaseResponse<bool>(
                 $"[CreatePlayer] : {ex.Message}",
                 StatusCode.InternalServerError);
         }
