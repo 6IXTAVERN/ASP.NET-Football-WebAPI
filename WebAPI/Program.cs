@@ -78,13 +78,16 @@ builder.Services.AddControllers().AddJsonOptions(jsonOptions =>
     });
 
 // Register IdentityDbContext
-var databaseConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<DataContext>(options => 
-    options.UseMySql(
-        databaseConnectionString, 
-        ServerVersion.AutoDetect(databaseConnectionString), 
-        b => b.MigrationsAssembly("WebAPI.DataAccessLayer"))
-    );
+// var databaseConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+// builder.Services.AddDbContext<DataContext>(options => 
+//     options.UseMySql(
+//         databaseConnectionString, 
+//         ServerVersion.AutoDetect(databaseConnectionString), 
+//         b => b.MigrationsAssembly("WebAPI.DataAccessLayer"))
+//     );
+
+builder.Services.AddDbContext<DataContext>(options =>
+    options.UseInMemoryDatabase("IdentityDemo"));
 
 builder.Services.AddAuthorization();
 // builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
@@ -142,11 +145,11 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// if (app.Environment.IsDevelopment())
+// {
+app.UseSwagger();
+app.UseSwaggerUI();
+// }
 
 app.UseAuthentication();
 app.UseAuthorization();
