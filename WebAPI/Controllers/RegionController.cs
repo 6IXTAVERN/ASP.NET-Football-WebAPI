@@ -63,7 +63,7 @@ public class RegionController : ControllerBase
         }
         
         var regionToReturn = _mapper.Map<RegionDto>(regionToCreate);
-        return CreatedAtAction("GetRegion", new { id = regionToCreate.Id }, regionToReturn);
+        return CreatedAtAction("GetRegion", new { regionId = regionToCreate.Id }, regionToReturn);
     }
     
     [Route("UpdateRegion/{regionId}")]

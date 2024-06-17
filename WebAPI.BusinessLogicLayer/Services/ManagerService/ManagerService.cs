@@ -48,18 +48,18 @@ public class ManagerService : IManagerService
         }
     }
 
-    public async Task<IBaseResponse<Manager>> CreateManager(Manager manager)
+    public async Task<IBaseResponse<bool>> CreateManager(Manager manager)
     {
         try
         {
             await _managerRepository.Create(manager);
-            return new BaseResponse<Manager>("Тренер создан", StatusCode.Ok, manager);
+            return new BaseResponse<bool>("Тренер создан", StatusCode.Ok, true);
         }
         catch (Exception ex)
         {
-            return new BaseResponse<Manager>(
+            return new BaseResponse<bool>(
                 $"[CreateManager] : {ex.Message}",
-                StatusCode.InternalServerError);
+                StatusCode.InternalServerError, false);
         }
     }
 

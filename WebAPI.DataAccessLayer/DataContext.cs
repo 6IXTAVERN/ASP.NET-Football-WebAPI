@@ -15,4 +15,19 @@ public class DataContext : IdentityDbContext<ApplicationUser>
     {
         
     }
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Team>()
+            .HasMany(t => t.Players)
+            .WithOne(p => p.Team)
+            .HasForeignKey(p => p.TeamId)
+            .OnDelete(DeleteBehavior.SetNull);  // Установить TeamId у игроков в NULL при удалении команды 
+        modelBuilder.Entity<Team>()
+            .HasOne(t => t.Manager)
+            .WithOne(m => m.Team)
+            .HasForeignKey<Manager>(m => m.TeamId)
+            .OnDelete(DeleteBehavior.SetNull); // Установить TeamId у тренера в NULL при удалении команды
+    }
 }

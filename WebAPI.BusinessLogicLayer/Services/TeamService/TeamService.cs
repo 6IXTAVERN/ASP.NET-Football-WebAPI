@@ -48,18 +48,18 @@ public class TeamService : ITeamService
         }
     }
 
-    public async Task<IBaseResponse<Team>> CreateTeam(Team team)
+    public async Task<IBaseResponse<bool>> CreateTeam(Team team)
     {
         try
         {
             await _teamRepository.Create(team);
-            return new BaseResponse<Team>("Команда создана", StatusCode.Ok, team);
+            return new BaseResponse<bool>("Команда создана", StatusCode.Ok, true);
         }
         catch (Exception ex)
         {
-            return new BaseResponse<Team>(
+            return new BaseResponse<bool>(
                 $"[CreateTeam] : {ex.Message}",
-                StatusCode.InternalServerError);
+                StatusCode.InternalServerError, false);
         }
     }
 

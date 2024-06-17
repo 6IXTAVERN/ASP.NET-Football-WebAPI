@@ -1,7 +1,9 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.BusinessLogicLayer.Services.ManagerService;
 using WebAPI.Domain.Models;
+using WebAPI.DTO.ManagerDTO;
 
 namespace WebAPI.Controllers;
 
@@ -10,58 +12,82 @@ namespace WebAPI.Controllers;
 public class ManagerController : ControllerBase
 {
     private readonly IManagerService _managerService;
+    private readonly IMapper _mapper;
     private readonly ILogger<ManagerController> _logger;
 
-    public ManagerController(IManagerService managerService, ILogger<ManagerController> logger)
+    public ManagerController(IManagerService managerService, IMapper mapper, ILogger<ManagerController> logger)
     {
         _logger = logger;
         _managerService = managerService;
+        _mapper = mapper;
     }
     
     [Route("GetManagerList")]
     [HttpGet]
-    public async Task<List<Manager>> GetManagers()
+    public async Task<IActionResult> GetManagers()
     {
         var response = await _managerService.GetManagers();
-        return response.Data!;
+        return Ok(response.Data);
     }
 
     [Route("GetManager/{managerId}")]
     [HttpGet]
-    public async Task<Manager> GetManager(string managerId)
+    public async Task<IActionResult> GetManager(string managerId)
     {
+        if (!ModelState.IsValid) {
+            return BadRequest(ModelState);
+        }
+
         var response = await _managerService.GetManagerById(managerId);
-        return response.Data!;
+        if (response.StatusCode == Domain.Response.StatusCode.NotFound) {
+            return NotFound();
+        }
+        
+        var managerToReturn = _mapper.Map<ManagerDto>(response.Data);
+
+        return Ok(managerToReturn);
     }
     
     [Route("CreateManager")]
     [HttpPost]
-    public async Task<Manager> CreateManager([FromBody] Manager manager)
+    public async Task<IActionResult> CreateManager([FromBody] CreateManagerDto createManagerDto)
     {
-        // {
-        //     "fullName": "Stepan",
-        //     "nationality": "Россия",
-        //     "position": "ФРВ"
-        // }
-        await _managerService.CreateManager(manager);
-        return manager;
+        if (ModelState.IsValid == false) {
+            return BadRequest("Cannot create manager");
+        }
+        
+        var managerToCreate = _mapper.Map<Manager>(createManagerDto);
+        var response = await _managerService.CreateManager(managerToCreate);
+        if (response.Data == false) {
+            return BadRequest("Something went wrong");
+        }
+        
+        var managerToReturn = _mapper.Map<ManagerDto>(managerToCreate);
+        return CreatedAtAction("GetManager", new { managerId = managerToCreate.Id }, managerToReturn);
     }
     
     [Route("UpdateManager/{managerId}")]
     [HttpPut]
-    public async Task<IActionResult> UpdateManager([FromBody] Manager manager)
+    public async Task<IActionResult> UpdateManager(
+        [FromRoute] string managerId, 
+        [FromBody] UpdateManagerDto updateManagerDto)
     {
-        await _managerService.UpdateManager(manager);
-        // if (managerId != manager.Id)
-        // {
-        //     return BadRequest();
-        // }
-        // var updatedManager = _Managerservice.UpdateManager(manager);
-        // if (updatedManager == null)
-        // {
-        //     return NotFound();
-        // }
-        return Ok(manager);
+        if (ModelState.IsValid == false) {
+            return BadRequest(ModelState);
+        }
+        
+        var managerToUpdate = _mapper.Map<Manager>(updateManagerDto);
+        if (managerToUpdate == null) {
+            return BadRequest(ModelState);
+        }
+        managerToUpdate.Id = managerId;
+
+        var response = await _managerService.UpdateManager(managerToUpdate);
+        
+        if (response.StatusCode == Domain.Response.StatusCode.NotFound) {
+            return NotFound();
+        }
+        
         return NoContent();
     }
     
@@ -69,7 +95,15 @@ public class ManagerController : ControllerBase
     [HttpDelete]
     public async Task<IActionResult> DeleteManager(string managerId)
     {
-        await _managerService.DeleteManager(managerId);
-        return Ok(managerId);
+        if (ModelState.IsValid == false) {
+            return BadRequest(ModelState);
+        }
+
+        var response = await _managerService.DeleteManager(managerId);
+        if (response.StatusCode == Domain.Response.StatusCode.NotFound) {
+            return BadRequest("Something went wrong");
+        }
+
+        return NoContent();
     }
 }

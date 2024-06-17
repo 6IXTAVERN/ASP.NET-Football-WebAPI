@@ -2,7 +2,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.BusinessLogicLayer.Services.PlayerService;
-using WebAPI.Domain.DTO.Player;
 using WebAPI.Domain.Models;
 using WebAPI.DTO.PlayerDTO;
 
