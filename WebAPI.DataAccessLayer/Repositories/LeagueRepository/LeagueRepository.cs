@@ -24,7 +24,7 @@ public class LeagueRepository : ILeagueRepository
         }
         catch (Exception)
         {
-            _logger.LogError("Error while creating a player");
+            _logger.LogError("Error while creating a league");
             throw;
         }
     }
@@ -46,7 +46,7 @@ public class LeagueRepository : ILeagueRepository
         }
         catch (Exception)
         {
-            _logger.LogError("Error while deleting a player");
+            _logger.LogError("Error while deleting a league");
             throw;
         }
     }
@@ -62,7 +62,7 @@ public class LeagueRepository : ILeagueRepository
         }
         catch (Exception)
         {
-            _logger.LogError("Error while updating a player");
+            _logger.LogError("Error while updating a league");
             throw;
         }
     }
@@ -99,7 +99,7 @@ public class LeagueRepository : ILeagueRepository
         }
         catch (Exception)
         {
-            _logger.LogError("Error while getting list of players");
+            _logger.LogError("Error while getting list of leagues");
             throw;
         }
     }

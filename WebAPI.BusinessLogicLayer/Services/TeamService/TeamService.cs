@@ -18,7 +18,12 @@ public class TeamService : ITeamService
         try
         {
             var entity = await _teamRepository.GetById(teamId);
-            // TODO: проверить на null
+                       
+            if (entity == null)
+            {
+                return new BaseResponse<Team>("Команда не найдена", StatusCode.NotFound);
+            }
+
             return new BaseResponse<Team>("Команда найдена", StatusCode.Ok, entity);
         }
         catch (Exception ex)

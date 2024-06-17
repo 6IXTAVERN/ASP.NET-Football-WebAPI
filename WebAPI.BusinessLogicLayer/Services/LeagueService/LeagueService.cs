@@ -18,7 +18,12 @@ public class LeagueService : ILeagueService
         try
         {
             var entity = await _leagueRepository.GetById(leagueId);
-            // TODO: проверить на null
+            
+            if (entity == null)
+            {
+                return new BaseResponse<League>("Лига не найдена", StatusCode.NotFound);
+            }
+            
             return new BaseResponse<League>("Лига найдена", StatusCode.Ok, entity);
         }
         catch (Exception ex)
@@ -52,7 +57,6 @@ public class LeagueService : ILeagueService
     {
         try
         {
-            // TODO: разные ситуации предусмотреть
             await _leagueRepository.Create(league);
             return new BaseResponse<bool>("Лига создана", StatusCode.Ok, true);
         }
@@ -68,7 +72,6 @@ public class LeagueService : ILeagueService
     {
         try
         {
-            // TODO: разные ситуации предусмотреть
             var entity = await _leagueRepository.Update(league);
             return new BaseResponse<League>("Лига изменена", StatusCode.Ok, entity);
         }

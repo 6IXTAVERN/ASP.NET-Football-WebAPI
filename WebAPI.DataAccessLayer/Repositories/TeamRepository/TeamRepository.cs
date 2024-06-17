@@ -24,7 +24,7 @@ public class TeamRepository : ITeamRepository
         }
         catch (Exception)
         {
-            _logger.LogError("Error while creating a player");
+            _logger.LogError("Error while creating a team");
             throw;
         }
     }
@@ -46,7 +46,7 @@ public class TeamRepository : ITeamRepository
         }
         catch (Exception)
         {
-            _logger.LogError("Error while deleting a player");
+            _logger.LogError("Error while deleting a team");
             throw;
         }
     }
@@ -62,7 +62,7 @@ public class TeamRepository : ITeamRepository
         }
         catch (Exception)
         {
-            _logger.LogError("Error while updating a player");
+            _logger.LogError("Error while updating a team");
             throw;
         }
     }
@@ -87,7 +87,7 @@ public class TeamRepository : ITeamRepository
         }
         catch (Exception)
         {
-            _logger.LogError("Error while getting list of players");
+            _logger.LogError("Error while getting list of teams");
             throw;
         }
     }
@@ -104,7 +104,7 @@ public class TeamRepository : ITeamRepository
         }
         catch (Exception)
         {
-            _logger.LogError("Error while getting list of players");
+            _logger.LogError("Error while getting list of teams");
             throw;
         }
     }

@@ -18,7 +18,12 @@ public class RegionService : IRegionService
         try
         {
             var entity = await _regionRepository.GetById(regionId);
-            // TODO: проверить на null
+                       
+            if (entity == null)
+            {
+                return new BaseResponse<Region>("Регион не найден", StatusCode.NotFound);
+            }
+
             return new BaseResponse<Region>("Регион найден", StatusCode.Ok, entity);
         }
         catch (Exception ex)
@@ -38,7 +43,7 @@ public class RegionService : IRegionService
             return new BaseResponse<List<Region>>(
                 description: "Получены существующие регионы",
                 statusCode: StatusCode.Ok,
-                data: entities.ToList());
+                data: entities);
         }
         catch (Exception ex)
         {

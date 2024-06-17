@@ -18,7 +18,12 @@ public class ManagerService : IManagerService
         try
         {
             var entity = await _managerRepository.GetById(managerId);
-            // TODO: проверить на null
+            
+            if (entity == null)
+            {
+                return new BaseResponse<Manager>("Тренер не найден", StatusCode.NotFound);
+            }
+            
             return new BaseResponse<Manager>("Тренер найден", StatusCode.Ok, entity);
         }
         catch (Exception ex)
@@ -38,7 +43,7 @@ public class ManagerService : IManagerService
             return new BaseResponse<List<Manager>>(
                 description: "Получены существующие тренеры",
                 statusCode: StatusCode.Ok,
-                data: entities.ToList());
+                data: entities);
         }
         catch (Exception ex)
         {

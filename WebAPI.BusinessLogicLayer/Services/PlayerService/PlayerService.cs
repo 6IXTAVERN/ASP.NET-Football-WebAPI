@@ -17,14 +17,19 @@ public class PlayerService : IPlayerService
     {
         try
         {
-            var resume = await _playerRepository.GetById(playerId);
-            // TODO: проверить на null
-            return new BaseResponse<Player>("Игрок найден", StatusCode.Ok, resume);
+            var entity = await _playerRepository.GetById(playerId);
+                        
+            if (entity == null)
+            {
+                return new BaseResponse<Player>("Игрок не найден", StatusCode.NotFound);
+            }
+
+            return new BaseResponse<Player>("Игрок найден", StatusCode.Ok, entity);
         }
         catch (Exception ex)
         {
             return new BaseResponse<Player>(
-                $"[GetResumeByUserId] : {ex.Message}",
+                $"[GetPlayerById] : {ex.Message}",
                 StatusCode.InternalServerError);
         }
     }
@@ -33,17 +38,16 @@ public class PlayerService : IPlayerService
     {
         try
         {
-            var resumes = await _playerRepository.GetAll(contextSearch);
+            var entities = await _playerRepository.GetAll(contextSearch);
             
-            return resumes.Count > 0 ?
-                new BaseResponse<List<Player>>("Получены существующие резюме", 
-                    StatusCode.Ok, resumes.ToList()) :
-                new BaseResponse<List<Player>>("Найдено 0 элементов", 
-                    StatusCode.Ok, resumes.ToList());
+            return new BaseResponse<List<Player>>(
+                description: "Получены существующие игроки",
+                statusCode: StatusCode.Ok,
+                data: entities);
         }
         catch (Exception ex)
         {
-            return new BaseResponse<List<Player>>($"[Resume.GetResumes] : {ex.Message}", 
+            return new BaseResponse<List<Player>>($"[GetPlayers] : {ex.Message}", 
                 StatusCode.InternalServerError);
         }
     }

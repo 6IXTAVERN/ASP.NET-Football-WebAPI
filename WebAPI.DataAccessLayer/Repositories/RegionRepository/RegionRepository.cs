@@ -24,7 +24,7 @@ public class RegionRepository : IRegionRepository
         }
         catch (Exception)
         {
-            _logger.LogError("Error while creating a player");
+            _logger.LogError("Error while creating a region");
             throw;
         }
     }
@@ -47,7 +47,7 @@ public class RegionRepository : IRegionRepository
         }
         catch (Exception)
         {
-            _logger.LogError("Error while deleting a player");
+            _logger.LogError("Error while deleting a region");
             throw;
         }
     }
@@ -63,7 +63,7 @@ public class RegionRepository : IRegionRepository
         }
         catch (Exception)
         {
-            _logger.LogError("Error while updating a player");
+            _logger.LogError("Error while updating a region");
             throw;
         }
     }
@@ -85,7 +85,7 @@ public class RegionRepository : IRegionRepository
         }
         catch (Exception)
         {
-            _logger.LogError("Error while getting list of players");
+            _logger.LogError("Error while getting list of regions");
             throw;
         }
     }
@@ -100,7 +100,7 @@ public class RegionRepository : IRegionRepository
         }
         catch (Exception)
         {
-            _logger.LogError("Error while getting list of players");
+            _logger.LogError("Error while getting list of regions");
             throw;
         }
     }

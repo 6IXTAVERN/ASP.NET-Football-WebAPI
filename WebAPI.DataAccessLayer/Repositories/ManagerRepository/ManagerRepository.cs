@@ -24,7 +24,7 @@ public class ManagerRepository : IManagerRepository
             }
             catch (Exception)
             {
-                _logger.LogError("Error while creating a player");
+                _logger.LogError("Error while creating a manager");
                 throw;
             }
     }
@@ -47,7 +47,7 @@ public class ManagerRepository : IManagerRepository
         }
         catch (Exception)
         {
-            _logger.LogError("Error while deleting a player");
+            _logger.LogError("Error while deleting a manager");
             throw;
         }
     }
@@ -63,7 +63,7 @@ public class ManagerRepository : IManagerRepository
         }
         catch (Exception)
         {
-            _logger.LogError("Error while updating a player");
+            _logger.LogError("Error while updating a manager");
             throw;
         }
     }
@@ -85,7 +85,7 @@ public class ManagerRepository : IManagerRepository
         }
         catch (Exception)
         {
-            _logger.LogError("Error while getting list of players");
+            _logger.LogError("Error while getting list of managers");
             throw;
         }
     }
@@ -100,7 +100,7 @@ public class ManagerRepository : IManagerRepository
         }
         catch (Exception)
         {
-            _logger.LogError("Error while getting list of players");
+            _logger.LogError("Error while getting list of managers");
             throw;
         }
     }
