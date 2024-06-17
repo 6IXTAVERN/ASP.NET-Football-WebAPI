@@ -22,6 +22,7 @@ public class PlayerController : ControllerBase
         _mapper = mapper;
     }
     
+    [Authorize]
     [Route("GetPlayerList")]
     [HttpGet]
     public async Task<IActionResult> GetPlayers()
@@ -30,6 +31,7 @@ public class PlayerController : ControllerBase
         return Ok(response.Data);
     }
 
+    [Authorize]
     [Route("GetPlayer/{playerId}")]
     [HttpGet]
     public async Task<IActionResult> GetPlayer(string playerId)
@@ -48,6 +50,7 @@ public class PlayerController : ControllerBase
         return Ok(playerToReturn);
     }
     
+    [Authorize(Roles = "Administrator")]
     [Route("CreatePlayer")]
     [HttpPost]
     public async Task<IActionResult> CreatePlayer([FromBody] CreatePlayerDto createPlayerDto)
@@ -66,6 +69,7 @@ public class PlayerController : ControllerBase
         return CreatedAtAction("GetPlayer", new { playerId = playerToCreate.Id }, playerToReturn);
     }
     
+    [Authorize(Roles = "Administrator")]
     [Route("UpdatePlayer/{playerId}")]
     [HttpPut]
     public async Task<IActionResult> UpdatePlayer(
@@ -91,6 +95,7 @@ public class PlayerController : ControllerBase
         return NoContent();
     }
     
+    [Authorize(Roles = "Administrator")]
     [Route("DeletePlayer/{playerId}")]
     [HttpDelete]
     public async Task<IActionResult> DeletePlayer(string playerId)

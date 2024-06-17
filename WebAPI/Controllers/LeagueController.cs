@@ -22,6 +22,7 @@ public class LeagueController : ControllerBase
         _mapper = mapper;
     }
     
+    [Authorize(Roles = "User")]
     [Route("GetLeagueList")]
     [HttpGet]
     public async Task<IActionResult> GetLeagues()
@@ -30,6 +31,7 @@ public class LeagueController : ControllerBase
         return Ok(response.Data);
     }
 
+    [Authorize]
     [Route("GetLeague/{leagueId}")]
     [HttpGet]
     public async Task<IActionResult> GetLeague(string leagueId)
@@ -48,6 +50,7 @@ public class LeagueController : ControllerBase
         return Ok(leagueToReturn);
     }
     
+    [Authorize(Roles = "Administrator")]
     [Route("CreateLeague")]
     [HttpPost]
     public async Task<IActionResult> CreateLeague([FromBody] CreateLeagueDto createLeagueDto)
@@ -66,6 +69,7 @@ public class LeagueController : ControllerBase
         return CreatedAtAction("GetLeague", new { leagueId = leagueToCreate.Id }, leagueToReturn);
     }
     
+    [Authorize(Roles = "Administrator")]
     [Route("UpdateLeague/{leagueId}")]
     [HttpPut]
     public async Task<IActionResult> UpdateLeague(
@@ -91,6 +95,7 @@ public class LeagueController : ControllerBase
         return NoContent();
     }
     
+    [Authorize(Roles = "Administrator")]
     [Route("DeleteLeague/{leagueId}")]
     [HttpDelete]
     public async Task<IActionResult> DeleteLeague(string leagueId)

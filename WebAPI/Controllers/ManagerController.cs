@@ -22,6 +22,7 @@ public class ManagerController : ControllerBase
         _mapper = mapper;
     }
     
+    [Authorize]
     [Route("GetManagerList")]
     [HttpGet]
     public async Task<IActionResult> GetManagers()
@@ -30,6 +31,7 @@ public class ManagerController : ControllerBase
         return Ok(response.Data);
     }
 
+    [Authorize]
     [Route("GetManager/{managerId}")]
     [HttpGet]
     public async Task<IActionResult> GetManager(string managerId)
@@ -48,6 +50,7 @@ public class ManagerController : ControllerBase
         return Ok(managerToReturn);
     }
     
+    [Authorize(Roles = "Administrator")]
     [Route("CreateManager")]
     [HttpPost]
     public async Task<IActionResult> CreateManager([FromBody] CreateManagerDto createManagerDto)
@@ -66,6 +69,7 @@ public class ManagerController : ControllerBase
         return CreatedAtAction("GetManager", new { managerId = managerToCreate.Id }, managerToReturn);
     }
     
+    [Authorize(Roles = "Administrator")]
     [Route("UpdateManager/{managerId}")]
     [HttpPut]
     public async Task<IActionResult> UpdateManager(
@@ -91,6 +95,7 @@ public class ManagerController : ControllerBase
         return NoContent();
     }
     
+    [Authorize(Roles = "Administrator")]
     [Route("DeleteManager/{managerId}")]
     [HttpDelete]
     public async Task<IActionResult> DeleteManager(string managerId)

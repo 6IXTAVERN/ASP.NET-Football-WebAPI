@@ -22,6 +22,7 @@ public class TeamController : ControllerBase
         _mapper = mapper;
     }
     
+    [Authorize]
     [Route("GetTeamList")]
     [HttpGet]
     public async Task<IActionResult> GetTeams()
@@ -30,6 +31,7 @@ public class TeamController : ControllerBase
         return Ok(response.Data);
     }
 
+    [Authorize]
     [Route("GetTeam/{teamId}")]
     [HttpGet]
     public async Task<IActionResult> GetTeam(string teamId)
@@ -48,6 +50,7 @@ public class TeamController : ControllerBase
         return Ok(teamToReturn);
     }
     
+    [Authorize(Roles = "Administrator")]
     [Route("CreateTeam")]
     [HttpPost]
     public async Task<IActionResult> CreateTeam([FromBody] CreateTeamDto createTeamDto)
@@ -66,6 +69,7 @@ public class TeamController : ControllerBase
         return CreatedAtAction("GetTeam", new { teamId = teamToCreate.Id }, teamToReturn);
     }
     
+    [Authorize(Roles = "Administrator")]
     [Route("UpdateTeam/{teamId}")]
     [HttpPut]
     public async Task<IActionResult> UpdateTeam(
@@ -91,6 +95,7 @@ public class TeamController : ControllerBase
         return NoContent();
     }
     
+    [Authorize(Roles = "Administrator")]
     [Route("DeleteTeam/{teamId}")]
     [HttpDelete]
     public async Task<IActionResult> DeleteTeam(string teamId)

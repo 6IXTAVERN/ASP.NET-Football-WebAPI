@@ -22,6 +22,7 @@ public class RegionController : ControllerBase
         _mapper = mapper;
     }
     
+    [Authorize]
     [Route("GetRegionList")]
     [HttpGet]
     public async Task<IActionResult> GetRegions()
@@ -30,6 +31,7 @@ public class RegionController : ControllerBase
         return Ok(response.Data);
     }
 
+    [Authorize]
     [Route("GetRegion/{regionId}")]
     [HttpGet]
     public async Task<IActionResult> GetRegion(string regionId)
@@ -48,6 +50,7 @@ public class RegionController : ControllerBase
         return Ok(regionToReturn);
     }
     
+    [Authorize(Roles = "Administrator")]
     [Route("CreateRegion")]
     [HttpPost]
     public async Task<IActionResult> CreateRegion([FromBody] CreateRegionDto createRegionDto)
@@ -66,6 +69,7 @@ public class RegionController : ControllerBase
         return CreatedAtAction("GetRegion", new { regionId = regionToCreate.Id }, regionToReturn);
     }
     
+    [Authorize(Roles = "Administrator")]
     [Route("UpdateRegion/{regionId}")]
     [HttpPut]
     public async Task<IActionResult> UpdateRegion(
@@ -91,6 +95,7 @@ public class RegionController : ControllerBase
         return NoContent();
     }
     
+    [Authorize(Roles = "Administrator")]
     [Route("DeleteRegion/{regionId}")]
     [HttpDelete]
     public async Task<IActionResult> DeleteRegion(string regionId)
