@@ -29,11 +29,11 @@ public class PlayerService : IPlayerService
         }
     }
     
-    public async Task<IBaseResponse<List<Player>>> GetPlayers()
+    public async Task<IBaseResponse<List<Player>>> GetPlayers(string? contextSearch = null)
     {
         try
         {
-            var resumes = await _playerRepository.GetAll();
+            var resumes = await _playerRepository.GetAll(contextSearch);
             
             return resumes.Count > 0 ?
                 new BaseResponse<List<Player>>("Получены существующие резюме", 

@@ -68,13 +68,20 @@ public class RegionRepository : IRegionRepository
         }
     }
     
-    public async Task<List<Region>> GetAll()
+    public async Task<List<Region>> GetAll(string? contextSearch = null)
     {
         try
         {
-            return await _db.Regions
-                .Include(region => region.Leagues)
-                .ToListAsync();
+            IQueryable<Region> query = _db.Regions;
+
+            if (!string.IsNullOrEmpty(contextSearch))
+            {
+                query = query.Where(region => region.Name.ToLower().Contains(contextSearch.ToLower()));
+            }
+
+            query = query.Include(region => region.Leagues);
+
+            return await query.ToListAsync();
         }
         catch (Exception)
         {

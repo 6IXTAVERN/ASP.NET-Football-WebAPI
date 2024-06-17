@@ -7,6 +7,7 @@ using WebAPI.DTO.ManagerDTO;
 
 namespace WebAPI.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class ManagerController : ControllerBase
@@ -22,16 +23,15 @@ public class ManagerController : ControllerBase
         _mapper = mapper;
     }
     
-    [Authorize]
+    
     [Route("GetManagerList")]
     [HttpGet]
-    public async Task<IActionResult> GetManagers()
+    public async Task<IActionResult> GetManagers([FromQuery] string? contextSearch = null)
     {
-        var response = await _managerService.GetManagers();
+        var response = await _managerService.GetManagers(contextSearch);
         return Ok(response.Data);
     }
 
-    [Authorize]
     [Route("GetManager/{managerId}")]
     [HttpGet]
     public async Task<IActionResult> GetManager(string managerId)

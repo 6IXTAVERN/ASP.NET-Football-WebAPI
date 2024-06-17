@@ -29,11 +29,11 @@ public class RegionService : IRegionService
         }
     }
 
-    public async Task<IBaseResponse<List<Region>>> GetRegions()
+    public async Task<IBaseResponse<List<Region>>> GetRegions(string? contextSearch = null)
     {
         try
         {
-            var entities = await _regionRepository.GetAll();
+            var entities = await _regionRepository.GetAll(contextSearch);
             
             return new BaseResponse<List<Region>>(
                 description: "Получены существующие регионы",

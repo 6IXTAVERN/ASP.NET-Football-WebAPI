@@ -134,15 +134,11 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
 
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-    
-    if (!await roleManager.RoleExistsAsync("Administrator"))
-    {
-        await roleManager.CreateAsync(new IdentityRole("Administrator"));
-    }
-    if (!await roleManager.RoleExistsAsync("User"))
-    {
-        await roleManager.CreateAsync(new IdentityRole("User"));
-    }
+    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+
+    await InitRolesAndAdminUser.InitializeAsync(
+        userManager: userManager, 
+        roleManager: roleManager);
 }
 
 // Configure the HTTP request pipeline.

@@ -7,6 +7,7 @@ using WebAPI.DTO.PlayerDTO;
 
 namespace WebAPI.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class PlayerController : ControllerBase
@@ -22,16 +23,14 @@ public class PlayerController : ControllerBase
         _mapper = mapper;
     }
     
-    [Authorize]
     [Route("GetPlayerList")]
     [HttpGet]
-    public async Task<IActionResult> GetPlayers()
+    public async Task<IActionResult> GetPlayers([FromQuery] string? contextSearch = null)
     {
-        var response = await _playerService.GetPlayers();
+        var response = await _playerService.GetPlayers(contextSearch);
         return Ok(response.Data);
     }
 
-    [Authorize]
     [Route("GetPlayer/{playerId}")]
     [HttpGet]
     public async Task<IActionResult> GetPlayer(string playerId)

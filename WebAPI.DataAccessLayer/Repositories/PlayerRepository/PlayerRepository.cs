@@ -68,13 +68,20 @@ public class PlayerRepository : IPlayerRepository
         }
     }
     
-    public async Task<List<Player>> GetAll()
+    public async Task<List<Player>> GetAll(string? contextSearch = null)
     {
         try
         {
-            return await _db.Players
-                .Include(player => player.Team)
-                .ToListAsync();
+            IQueryable<Player> query = _db.Players;
+
+            if (!string.IsNullOrEmpty(contextSearch))
+            {
+                query = query.Where(player => player.FullName.ToLower().Contains(contextSearch.ToLower()));
+            }
+
+            query = query.Include(player => player.Team);
+
+            return await query.ToListAsync();
         }
         catch (Exception)
         {

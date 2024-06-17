@@ -68,13 +68,20 @@ public class ManagerRepository : IManagerRepository
         }
     }
 
-    public async Task<List<Manager>> GetAll()
+    public async Task<List<Manager>> GetAll(string? contextSearch = null)
     {
         try
         {
-            return await _db.Managers
-                .Include(manager => manager.Team)
-                .ToListAsync();
+            IQueryable<Manager> query = _db.Managers;
+
+            if (!string.IsNullOrEmpty(contextSearch))
+            {
+                query = query.Where(manager => manager.FullName.ToLower().Contains(contextSearch.ToLower()));
+            }
+
+            query = query.Include(manager => manager.Team);
+
+            return await query.ToListAsync();
         }
         catch (Exception)
         {

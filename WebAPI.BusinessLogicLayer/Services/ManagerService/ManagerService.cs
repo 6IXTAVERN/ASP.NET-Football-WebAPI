@@ -29,11 +29,11 @@ public class ManagerService : IManagerService
         }
     }
 
-    public async Task<IBaseResponse<List<Manager>>> GetManagers()
+    public async Task<IBaseResponse<List<Manager>>> GetManagers(string? contextSearch = null)
     {
         try
         {
-            var entities = await _managerRepository.GetAll();
+            var entities = await _managerRepository.GetAll(contextSearch);
             
             return new BaseResponse<List<Manager>>(
                 description: "Получены существующие тренеры",

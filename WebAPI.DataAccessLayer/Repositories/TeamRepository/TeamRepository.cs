@@ -67,15 +67,23 @@ public class TeamRepository : ITeamRepository
         }
     }
     
-    public async Task<List<Team>> GetAll()
+    public async Task<List<Team>> GetAll(string? contextSearch = null)
     {
         try
         {
-            return await _db.Teams
+            IQueryable<Team> query = _db.Teams;
+
+            if (!string.IsNullOrEmpty(contextSearch))
+            {
+                query = query.Where(team => team.Name.ToLower().Contains(contextSearch.ToLower()));
+            }
+
+            query = query
                 .Include(team => team.Players)
                 .Include(team => team.League)
-                .Include(team => team.Manager)
-                .ToListAsync();
+                .Include(team => team.Manager);
+
+            return await query.ToListAsync();
         }
         catch (Exception)
         {

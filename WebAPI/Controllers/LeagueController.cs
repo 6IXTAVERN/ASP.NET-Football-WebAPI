@@ -8,6 +8,7 @@ using WebAPI.DTO.LeagueDTO;
 namespace WebAPI.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("[controller]")]
 public class LeagueController : ControllerBase
 {
@@ -22,16 +23,14 @@ public class LeagueController : ControllerBase
         _mapper = mapper;
     }
     
-    [Authorize(Roles = "User")]
     [Route("GetLeagueList")]
     [HttpGet]
-    public async Task<IActionResult> GetLeagues()
+    public async Task<IActionResult> GetLeagues([FromQuery] string? contextSearch = null)
     {
-        var response = await _leagueService.GetLeagues();
+        var response = await _leagueService.GetLeagues(contextSearch);
         return Ok(response.Data);
     }
 
-    [Authorize]
     [Route("GetLeague/{leagueId}")]
     [HttpGet]
     public async Task<IActionResult> GetLeague(string leagueId)

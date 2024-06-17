@@ -7,6 +7,7 @@ using WebAPI.DTO.TeamDTO;
 
 namespace WebAPI.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class TeamController : ControllerBase
@@ -22,16 +23,14 @@ public class TeamController : ControllerBase
         _mapper = mapper;
     }
     
-    [Authorize]
     [Route("GetTeamList")]
     [HttpGet]
-    public async Task<IActionResult> GetTeams()
+    public async Task<IActionResult> GetTeams([FromQuery] string? contextSearch = null)
     {
-        var response = await _teamService.GetTeams();
+        var response = await _teamService.GetTeams(contextSearch);
         return Ok(response.Data);
     }
 
-    [Authorize]
     [Route("GetTeam/{teamId}")]
     [HttpGet]
     public async Task<IActionResult> GetTeam(string teamId)

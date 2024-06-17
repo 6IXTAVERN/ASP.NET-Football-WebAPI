@@ -29,11 +29,11 @@ public class LeagueService : ILeagueService
         }
     }
 
-    public async Task<IBaseResponse<List<League>>> GetLeagues()
+    public async Task<IBaseResponse<List<League>>> GetLeagues(string? contextSearch = null)
     {
         try
         {
-            var entities = await _leagueRepository.GetAll();
+            var entities = await _leagueRepository.GetAll(contextSearch);
             
             return new BaseResponse<List<League>>(
                 description: "Получены существующие лиги",

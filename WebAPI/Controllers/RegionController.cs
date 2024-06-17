@@ -7,6 +7,7 @@ using WebAPI.DTO.RegionDTO;
 
 namespace WebAPI.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class RegionController : ControllerBase
@@ -22,16 +23,14 @@ public class RegionController : ControllerBase
         _mapper = mapper;
     }
     
-    [Authorize]
     [Route("GetRegionList")]
     [HttpGet]
-    public async Task<IActionResult> GetRegions()
+    public async Task<IActionResult> GetRegions([FromQuery] string? contextSearch = null)
     {
-        var response = await _regionService.GetRegions();
+        var response = await _regionService.GetRegions(contextSearch);
         return Ok(response.Data);
     }
 
-    [Authorize]
     [Route("GetRegion/{regionId}")]
     [HttpGet]
     public async Task<IActionResult> GetRegion(string regionId)

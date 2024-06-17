@@ -67,17 +67,24 @@ public class LeagueRepository : ILeagueRepository
         }
     }
     
-    public async Task<List<League>> GetAll()
+    public async Task<List<League>> GetAll(string? contextSearch = null)
     {
         try
         {
-            return await _db.Leagues
-                .Include(league => league.Teams)
-                .ToListAsync();
+            IQueryable<League> query = _db.Leagues;
+
+            if (!string.IsNullOrEmpty(contextSearch))
+            {
+                query = query.Where(league => league.Name.ToLower().Contains(contextSearch.ToLower()));
+            }
+
+            query = query.Include(league => league.Teams);
+
+            return await query.ToListAsync();
         }
         catch (Exception)
         {
-            _logger.LogError("Error while getting list of players");
+            _logger.LogError("Error while getting list of leagues");
             throw;
         }
     }

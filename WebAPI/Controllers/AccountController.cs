@@ -9,7 +9,6 @@ namespace WebAPI.Controllers ;
 
 [ApiController]
 [Route("user")]
-[Authorize]
 public class AccountController : Controller
 {
     private readonly UserManager<IdentityUser> _userManager;

@@ -11,5 +11,5 @@ public interface IBaseRepository<T>
 
     Task<T?> GetById(string entityId);
     
-    Task<List<T>> GetAll();
+    Task<List<T>> GetAll(string? contextSearch = null);
 }

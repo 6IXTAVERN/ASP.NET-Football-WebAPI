@@ -29,11 +29,11 @@ public class TeamService : ITeamService
         }
     }
 
-    public async Task<IBaseResponse<List<Team>>> GetTeams()
+    public async Task<IBaseResponse<List<Team>>> GetTeams(string? contextSearch = null)
     {
         try
         {
-            var entities = await _teamRepository.GetAll();
+            var entities = await _teamRepository.GetAll(contextSearch);
             
             return new BaseResponse<List<Team>>(
                 description: "Получены существующие команды",
