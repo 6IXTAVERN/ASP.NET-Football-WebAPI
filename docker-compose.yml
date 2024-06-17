@@ -1,0 +1,36 @@
+﻿version: '3.8'
+
+services:
+  webapi:
+    image: webapi
+    build:
+      context: .
+      dockerfile: WebAPI/Dockerfile
+    depends_on:
+      - mysql
+    environment:
+      - DB_HOST=mysql
+      # continue
+    ports:
+      - "5000:80"
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql:8.0.34
+    environment:
+     # continue
+    ports:
+      - "3800:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db-data:
+    driver: local
