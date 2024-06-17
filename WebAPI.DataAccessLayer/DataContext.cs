@@ -1,10 +1,11 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Domain.Models;
 
 namespace WebAPI.DataAccessLayer ;
 
-public class DataContext : IdentityDbContext<ApplicationUser>
+public class DataContext : IdentityDbContext<IdentityUser>
 {
     public required DbSet<Player> Players { get; set; }
     public required DbSet<Manager> Managers { get; set; }

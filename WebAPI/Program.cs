@@ -1,15 +1,17 @@
+using System.Text;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Filters;
 using WebAPI;
 using WebAPI.BusinessLogicLayer.Services.LeagueService;
 using WebAPI.BusinessLogicLayer.Services.ManagerService;
 using WebAPI.BusinessLogicLayer.Services.PlayerService;
 using WebAPI.BusinessLogicLayer.Services.RegionService;
 using WebAPI.BusinessLogicLayer.Services.TeamService;
-using WebAPI.Domain.Models;
+using WebAPI.BusinessLogicLayer.Services.TokenService;
 using WebAPI.DataAccessLayer;
 using WebAPI.DataAccessLayer.Repositories.LeagueRepository;
 using WebAPI.DataAccessLayer.Repositories.ManagerRepository;
@@ -35,6 +37,8 @@ builder.Services.AddScoped<ILeagueService, LeagueService>();
 builder.Services.AddScoped<IRegionRepository, RegionRepository>();
 builder.Services.AddScoped<IRegionService, RegionService>();
 
+builder.Services.AddTransient<ITokenService, TokenService>();
+
 // Настройка маппера
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
@@ -52,18 +56,26 @@ builder.Services.AddControllers().AddJsonOptions(jsonOptions =>
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen(options =>
     {
-        In = ParameterLocation.Header,
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
+        var jwtSecurityScheme = new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            Scheme = JwtBearerDefaults.AuthenticationScheme,
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Reference = new OpenApiReference
+            {
+                Type = ReferenceType.SecurityScheme,
+                Id = JwtBearerDefaults.AuthenticationScheme
+            }
+        };
+
+        options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, jwtSecurityScheme);
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement(){{ jwtSecurityScheme, new string[] {} }});
     });
-    
-    options.OperationFilter<SecurityRequirementsOperationFilter>();
-});
 
 // Register IdentityDbContext
 var databaseConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -75,9 +87,45 @@ builder.Services.AddDbContext<DataContext>(options =>
     );
 
 builder.Services.AddAuthorization();
-builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<DataContext>();
+// builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
+//     .AddRoles<IdentityRole>()
+//     .AddEntityFrameworkStores<DataContext>();
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+{
+    options.SignIn.RequireConfirmedEmail = false;
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 8;
+}).AddRoles<IdentityRole>().AddEntityFrameworkStores<DataContext>();
+
+    builder.Services.AddAuthentication(auth =>
+    {
+        auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    }).AddJwtBearer(options =>
+    {
+        options.SaveToken = true;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        };
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                context.Token = context.Request.Cookies[builder.Configuration["Jwt:CookieName"]!];
+                return Task.CompletedTask;
+            },
+        };
+    });
 
 var app = builder.Build();
 
@@ -104,8 +152,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapIdentityApi<ApplicationUser>();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
